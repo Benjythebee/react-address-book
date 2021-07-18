@@ -1,11 +1,12 @@
 # Address Book in React.
 
-This is a Web3 Address Book in React made using ethers.js. 
+This is a simple Web3 Address Book in React that allows you to save addresses and build yourself a library of contacts.
+When entering a Contact you have the ability to change the name of that contact, remove them and send that contact Ether (on rinkeby).
 
 <img src="https://user-images.githubusercontent.com/38708022/126053949-35eab0ed-3db2-498a-a21f-4628c5f42480.png" alt="drawing" width="500"/>
 <img src="https://user-images.githubusercontent.com/38708022/126053954-6176c967-0bda-46e4-bf62-946381d5e6f5.png" alt="drawing" width="500"/>
 
-
+This app was made using Ethers.js as it is a super lighweight library relative to Web3.js.
 
 ## Setup
 
@@ -13,7 +14,6 @@ This is a Web3 Address Book in React made using ethers.js.
 - run `npm i`
 
 ## Available Scripts
-
 
 ### `npm run dev`
 
