@@ -11,7 +11,9 @@ export interface ModalProps {
   className?: string;
   onClose?: () => void;
 }
-
+/**
+ * A general Modal class
+ */
 export class Modal extends React.Component<ModalProps, any> {
   static currentElement: Element | null;
   constructor(props: ModalProps) {
@@ -45,7 +47,9 @@ interface AddContactModalStates {
   error?: string | null;
   value?: string | null;
 }
-
+/**
+ * Modal to add a contact
+ */
 export class AddContactModal extends React.Component<
   AddContactModalProps,
   AddContactModalStates
@@ -63,17 +67,18 @@ export class AddContactModal extends React.Component<
     this.setState({ error: null });
     let address;
     let value = this.state.value;
+    //Check if value is an address or ETH.
     if (!value || (!ethers.utils.isAddress(value) && !value?.match(/.eth/))) {
       this.setState({ error: "Address is not valid." });
       return;
     }
-
+    //if value is ENS we reverseLookup to obtain the address
     if (value.match(/.eth/)) {
       address = await Eth.reverseEnsName(value);
     } else {
       address = value;
     }
-
+    //Check if address is not null
     if (!address) {
       this.setState({ error: "Address is not valid." });
       return;

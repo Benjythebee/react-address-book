@@ -1,5 +1,7 @@
 import React from "react";
-
+  /**
+   * A loading icon that spins
+   */
 export default class LoadingIcon extends React.Component<any, any> {
     render() {
       return (

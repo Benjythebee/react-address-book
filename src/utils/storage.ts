@@ -2,6 +2,9 @@ export interface contact {
   name?: string;
   address: string;
 }
+/**
+ * A Storage manager to take care of all the contact lists saved on local.
+ */
 
 class StorageManager {
   private storage: Map<string, contact[]> = new Map();

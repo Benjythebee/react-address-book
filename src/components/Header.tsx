@@ -18,6 +18,7 @@ export class Header extends React.Component<any, any> {
   componentDidMount() {
     App.showSnackBar = this.showSnackBar.bind(this);
     App.on("changed", (e) => {
+      // Listen to changed account.
       this.setState({ wallet: App.state.wallet });
     });
     this.setState({ wallet: App.state.wallet });
@@ -29,7 +30,9 @@ export class Header extends React.Component<any, any> {
       this.getBalance();
     }
   }
-
+  /**
+   * Grab ENS name of the user.
+   */
   async getENS() {
     if (!this.state.wallet) {
       this.setState({ ensName: null });
@@ -40,7 +43,9 @@ export class Header extends React.Component<any, any> {
       this.setState({ ensName: ensName });
     }
   }
-
+  /**
+   * Grab the balance of the user
+   */
   async getBalance() {
     if (!this.state.wallet) {
       this.setState({ balance: 0 });
@@ -49,7 +54,9 @@ export class Header extends React.Component<any, any> {
     let balance = await Eth.getBalance(this.state.wallet);
     this.setState({ balance });
   }
-
+  /**
+   * Creates a "showSnackBar" function that will show an error overlay.
+   */
   showSnackBar(error: string) {
     this.setState({ error: error }, () => {
       setTimeout(() => {

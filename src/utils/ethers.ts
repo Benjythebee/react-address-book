@@ -1,4 +1,8 @@
 import { ethers } from "ethers";
+
+/**
+ * A General Ethereum helper that contains all the methods we need.
+ */
 class Ethereum {
   //@ts-ignore
   web3Provider: ethers.providers.Web3Provider = new ethers.getDefaultProvider(

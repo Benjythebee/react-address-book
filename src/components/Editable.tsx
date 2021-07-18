@@ -2,7 +2,6 @@ import React from "react";
 import { contact, Storage } from "../utils/storage";
 
 export interface Props {
-
   value: string;
 
   contact: contact;
@@ -13,9 +12,9 @@ export interface Props {
 }
 
 interface States {
-  value:string|null,
-  isEditing: boolean,
-  previousValue: string|null,
+  value: string | null;
+  isEditing: boolean;
+  previousValue: string | null;
 }
 
 export default class Editable extends React.Component<Props, States> {
@@ -38,15 +37,18 @@ export default class Editable extends React.Component<Props, States> {
       });
     }
   }
-
+  /**
+   * Check if the key is Enter. and Save on Enter.
+   */
   isEnterKey(event: any) {
     if (event.key === "Enter") {
       event.preventDefault();
       this.setState({ value: event.target["innerText"] }, () => this.save());
-      return;
     }
   }
-
+  /**
+   * Save the new value
+   */
   save() {
     if (!this.state.value || this.state.value?.length === 0) {
       this.setState({ value: this.state.previousValue });
@@ -57,7 +59,9 @@ export default class Editable extends React.Component<Props, States> {
     Storage.editContact(save);
     this.setState({ isEditing: false });
   }
-
+  /**
+   * toggles Editing of the Editable Component. (set to true)
+   */
   edit = (e: any) => {
     e.stopPropagation();
     this.setState({ isEditing: true, previousValue: this.state.value }, () => {

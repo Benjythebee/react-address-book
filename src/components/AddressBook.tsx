@@ -22,29 +22,37 @@ export default class AddressBook extends React.Component<
   }
 
   componentDidMount() {
+    // Listen to new AppState
     App.on("changed", () => {
       if (!App.state.wallet || !ethers.utils.isAddress(App.state.wallet)) {
         this.setState({ contacts: [] });
         return;
       }
+      // New user, get the contacts for that user.
       Storage.setUser(App.state.wallet);
       this.getContacts();
     });
     this.getContacts();
   }
-
+  /**
+   * Get Contacts for the current user
+   */
   getContacts() {
     if (App.signedIn) {
       this.setState({ contacts: Storage.contactList });
     }
   }
-
+  /**
+   * Add a contact to the address book
+   */
   addEntry = async (value: string) => {
     let contacts = Array.from(this.state.contacts);
     contacts.push({ address: value });
     this.setState({ contacts: contacts });
   };
-
+  /**
+   * remove a contact if it exists
+   */
   removeEntry = async (value: string) => {
     let contacts = Array.from(this.state.contacts);
     let oldContact = contacts.find(
@@ -100,7 +108,9 @@ class Contact extends React.Component<contactProps, contactStates> {
       uncollapsed: false,
     };
   }
-
+  /**
+   * Returns Contact Object
+   */
   get contact() {
     return {
       address: this.state.address,
@@ -112,19 +122,25 @@ class Contact extends React.Component<contactProps, contactStates> {
     Storage.addContact(this.props.contact);
     this.getENS();
   }
-
+  /**
+   * Grab the ENS name of that contact
+   */
   async getENS() {
     let ensName = await Eth.ensName(this.state.address);
     if (ensName) {
       this.setState({ ensName: ensName });
     }
   }
-
+  /**
+   * remove the contact from the list.
+   */
   remove = () => {
     Storage.removeContact(this.contact);
     this.props.onEdit && this.props.onEdit(this.state.address);
   };
-
+  /**
+   * Collapse or unCollapse the Collapsible Element
+   */
   toggle = () => {
     this.setState({ uncollapsed: !this.state.uncollapsed });
   };
