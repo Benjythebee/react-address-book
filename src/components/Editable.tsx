@@ -2,28 +2,25 @@ import React from "react";
 import { contact, Storage } from "../utils/storage";
 
 export interface Props {
-  /**
-   * value: the string value of the Editable
-   */
+
   value: string;
 
-  /**
-   * The contact.
-   */
   contact: contact;
-  /**
-   * Default value
-   */
+
   defaultValue: string;
-  /**
-   * if active or not
-   */
+
   onEditableClick?: Function;
 }
 
-export default class Editable extends React.Component<any, any> {
+interface States {
+  value:string|null,
+  isEditing: boolean,
+  previousValue: string|null,
+}
+
+export default class Editable extends React.Component<Props, States> {
   element: HTMLSpanElement | null = null;
-  constructor(props: any) {
+  constructor(props: Props) {
     super(props);
     this.state = {
       value: props.value,
@@ -59,20 +56,6 @@ export default class Editable extends React.Component<any, any> {
     });
     Storage.editContact(save);
     this.setState({ isEditing: false });
-  }
-
-  getInputType() {
-    return (
-      <input
-        className={this.props.className}
-        placeholder={this.state.defaultValue}
-        autoFocus={true}
-        type="text"
-        value={this.state.value}
-        onKeyUp={(e) => this.isEnterKey(e)}
-        onInput={(e) => this.setState({ value: e.target["value"] })}
-      />
-    );
   }
 
   edit = (e: any) => {

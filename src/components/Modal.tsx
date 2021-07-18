@@ -41,9 +41,14 @@ export interface AddContactModalProps {
   onClose?: () => void;
 }
 
+interface AddContactModalStates {
+  error?: string | null;
+  value?: string | null;
+}
+
 export class AddContactModal extends React.Component<
   AddContactModalProps,
-  any
+  AddContactModalStates
 > {
   constructor(props: AddContactModalProps) {
     super(props);

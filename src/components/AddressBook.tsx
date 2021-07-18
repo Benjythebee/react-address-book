@@ -10,7 +10,6 @@ import { promptAddContact, promptRemoveContact } from "./Modal";
 interface addressBookStates {
   contacts: contact[];
 }
-
 export default class AddressBook extends React.Component<
   any,
   addressBookStates
@@ -83,8 +82,14 @@ interface contactProps {
   contact: contact;
   onEdit?: Function;
 }
+interface contactStates {
+  name?: string;
+  address: string;
+  ensName?: string | null;
+  uncollapsed: boolean;
+}
 
-class Contact extends React.Component<contactProps, any> {
+class Contact extends React.Component<contactProps, contactStates> {
   element: HTMLElement | null = null;
   constructor(props: contactProps) {
     super(props);
@@ -92,9 +97,17 @@ class Contact extends React.Component<contactProps, any> {
       name: props.contact.name,
       address: props.contact.address,
       ensName: null,
+      uncollapsed: false,
     };
   }
-  //0x0fA074262d6AF761FB57751d610dc92Bac82AEf9
+
+  get contact() {
+    return {
+      address: this.state.address,
+      name: this.state.name,
+    };
+  }
+
   componentDidMount() {
     Storage.addContact(this.props.contact);
     this.getENS();
@@ -108,7 +121,7 @@ class Contact extends React.Component<contactProps, any> {
   }
 
   remove = () => {
-    Storage.removeContact(this.state.address);
+    Storage.removeContact(this.contact);
     this.props.onEdit && this.props.onEdit(this.state.address);
   };
 
