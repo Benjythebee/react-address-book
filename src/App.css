@@ -1,38 +1,456 @@
-.App {
-  text-align: center;
+@import url(./style/fonts.css);
+body {
+  font-family: "Roboto", sans-serif;
+  margin: 0;
+  padding: 0;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.Container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  font-size: larger;
+  border: 1px solid #c5c0c0;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  overflow: hidden;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+@media only screen and (min-width: 800px) {
+  .Container {
+    min-width: 670px;
+    max-width: 700px;
+    width: 60%;
+    height: 80%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.Container .ContainerHeader {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  padding: 10px 0 8px 10px;
+  background-color: #f05a29;
+}
+.Container .ContainerHeader .Logo {
+  flex: 2;
+}
+.Container .ContainerHeader .Logo h1 {
+  font-size: large;
+  margin: 0;
+}
+.Container .ContainerHeader .Panel {
+  position: absolute;
+  left: 25%;
+  bottom: 20px;
+  font-size: small;
+}
+@media only screen and (min-width: 800px) {
+  .Container .ContainerHeader .Logo h1 {
+    font-size: revert;
+  }
+}
+.User {
+  font-size: small;
+  margin: 0 4px 0 4px;
+}
+@media only screen and (min-width: 800px) {
+  .User {
+    font-size: unset;
+  }
+}
+button.LargeButton {
+  border-radius: 59px;
+  padding: 6px 16px;
+  border: 2px solid #f15a29;
+  cursor: pointer;
+}
+button.LargeButton.-white {
+  background: #ffffff;
+}
+button.LargeButton.-white:hover {
+  background: #eeeeee;
+}
+button.LargeButton.-orange {
+  background: #f15a29;
+}
+button.LargeButton.-orange:hover {
+  background: #ffffff;
+}
+button.AddContactButton {
+  height: 80px;
+  line-height: 80px;
+  width: 80px;
+  font-size: 2em;
+  font-weight: bold;
+  border-radius: 50%;
+  background-color: #f15a29;
   color: white;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #f15a29;
+  position: absolute;
+  bottom: 25px;
 }
-
-.App-link {
-  color: #61dafb;
+button.AddContactButton:hover {
+  background-color: white;
+  color: #f15a29;
 }
-
-@keyframes App-logo-spin {
+button.ActionButton {
+  border-radius: 5px;
+  padding: 12px 4px;
+  font-weight: 700;
+  cursor: pointer;
+  margin: 2px 5px;
+}
+button.ActionButton.-orange {
+  background: #f15a29;
+  border: 1px solid #f15a29;
+}
+button.ActionButton.-orange:hover {
+  background-color: #f15a29d6;
+}
+button.ActionButton.-orange:active {
+  background: #ffffff;
+}
+button.ActionButton.-white {
+  background: white;
+  border: 1px solid #f15a29;
+}
+button.ActionButton.-white:hover {
+  background-color: #fff8f6;
+}
+button.ActionButton.-white:active {
+  background: #e7e7e7;
+}
+button.ActionButton.-red {
+  background: #ee3d52;
+  border: 1px solid #ee3d52;
+}
+button.ActionButton.-red:hover {
+  background-color: #dd3044;
+}
+button.ActionButton.-red:active {
+  background: white;
+}
+button.ActionButton.RemoveButton {
+  font-size: larger;
+  padding: 8px;
+}
+.Pane {
+  background-color: #fdfdfd;
+  height: 100%;
+  padding: 10px;
+}
+.ScrollPane {
+  width: 100%;
+  max-height: 90%;
+  overflow-y: auto;
+}
+ul {
+  padding: 0;
+}
+ul li {
+  list-style: none;
+  margin-bottom: 4px;
+}
+.Collapsible {
+  background-color: #f3f3f3;
+  cursor: pointer;
+  border-radius: 5px;
+  border-bottom: 1px solid black;
+}
+.Collapsible:hover {
+  background-color: #efefef;
+}
+.Collapsible .Collapsible-header {
+  padding: 15px;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+}
+.Collapsible .Collapsible-header > div {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.Collapsible .Collapsible-header span {
+  margin-right: 4px;
+  font-size: smaller;
+}
+@media only screen and (min-width: 800px) {
+  .Collapsible .Collapsible-header span {
+    font-size: revert;
+  }
+}
+.Collapsible .Collapsible-header small {
+  font-weight: 100;
+  font-size: small;
+}
+.Collapsible .Collapsible-header .resetButton {
+  font-weight: 100;
+  font-size: small;
+  padding: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.Collapsible .Collapsible-header .resetButton:hover {
+  font-weight: bold;
+  animation-name: spin;
+  animation-duration: 5000ms;
+  animation-iteration-count: infinite;
+}
+.Collapsible section {
+  background-color: white;
+  padding: 0 18px;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.2s ease-out;
+}
+.Collapsible section.active {
+  display: block;
+}
+.Collapsible section > div {
+  display: flex;
+  height: 50px;
+}
+@keyframes spin {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
+  }
+}
+.SendEth {
+  position: relative;
+  display: flex;
+}
+.SendEth .ConstantBox {
+  width: 180px;
+}
+.SendEth .SlidingBox {
+  overflow: hidden;
+  width: 0;
+  transition: width 0.2s ease-in-out;
+}
+.SendEth.active .SlidingBox {
+  width: 180px;
+}
+.SendEth input {
+  width: 120px;
+  height: 80%;
+  box-sizing: border-box;
+  border: none;
+  padding: 12px;
+  font-size: 18px;
+}
+.Panel {
+  display: flex;
+  justify-content: space-between;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: x-small;
+}
+.Panel > div {
+  margin: auto 5px;
+}
+.Panel .Panel-title {
+  padding-left: 5%;
+  display: block;
+  cursor: pointer;
+  font-size: large;
+}
+.Panel .Panel-title .Panel_arrow {
+  float: right;
+}
+.Panel .Panel-title h4 {
+  font-size: 1em;
+}
+.Panel.is-clickable {
+  cursor: pointer;
+}
+.Panel.is-clickable:hover {
+  background: #e7e7e78f;
+}
+.Panel.is-warning {
+  margin: 0.75em 0 0.75em 0em;
+  background: #fff3488f;
+}
+.Panel.is-danger {
+  margin: 0.75em 0.1em 0.75em 0em;
+  background: #ff24248f;
+}
+.Panel.is-info {
+  margin: 0.75em 0.1em 0.75em 0em;
+  background: #a8bafc8f;
+}
+.Panel.is-help {
+  margin: 0.75em 0.1em 0.75em 0em;
+  background: #e0e0e08f;
+}
+.Panel.is-success {
+  margin: 0.75em 0.1em 0.75em 0em;
+  background: #a8fcb68f;
+}
+.loading-icon {
+  width: max-content;
+  -webkit-animation: loading-icon-spin 4s linear infinite;
+  -moz-animation: loading-icon-spin 4s linear infinite;
+  animation: loading-icon-spin 4s linear infinite;
+}
+@-moz-keyframes loading-icon-spin {
+  100% {
+    -moz-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes loading-icon-spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes loading-icon-spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+.Modal {
+  position: absolute;
+  z-index: 100;
+  background: #f7f7f7;
+  color: black;
+  border-radius: 4px;
+  padding: 10px;
+  width: 350px;
+  border: 1px solid #b0b0b0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-height: fit-content;
+  min-height: -moz-fit-content;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.Modal h1,
+.Modal h2,
+.Modal h3,
+.Modal h4,
+.Modal h5,
+.Modal h6 {
+  color: white;
+  margin: 0;
+}
+.Modal > header {
+  position: relative;
+  color: #ffffff;
+  background: #f05a29;
+  border-radius: 4px;
+  padding: 10px;
+  margin: -5px;
+  margin-bottom: 10px;
+}
+.Modal > header h3 {
+  background: none;
+  color: inherit;
+}
+.Modal > header div.searchBar {
+  position: absolute;
+  right: 40px;
+  top: 10px;
+}
+.Modal > header button {
+  position: absolute;
+  margin-right: 0;
+  top: 8px;
+  right: 10px;
+  background: white;
+  border: 1px solid #f05a29;
+  border-radius: 5px;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+.Modal > header button:hover {
+  background: #ececec;
+}
+.Modal > section {
+  flex: 1;
+  max-width: 100%;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+}
+.Modal section.AddContact > div {
+  margin-bottom: 15px;
+}
+.Modal section.AddContact input {
+  box-sizing: border-box;
+  height: 50px;
+  font-size: large;
+  width: 100%;
+  margin: 4px 0;
+}
+.Modal section.AddContact button {
+  margin: 0px 8px 8px 8px;
+}
+/* Snackbar */
+.snackbar {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  padding: 4px;
+  position: fixed;
+  z-index: 10002;
+  left: 50%;
+  bottom: 30%;
+}
+.snackbar.show {
+  visibility: visible;
+  /* Show the snackbar */
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 4.5s;
+  animation: fadein 0.5s, fadeout 0.5s 4.5s;
+}
+/* Animations to fade the snackbar in and out */
+/* Shamelessly copied from w3school */
+@-webkit-keyframes fadein {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+  to {
+    bottom: 30%;
+    opacity: 1;
+  }
+}
+@keyframes fadein {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+  to {
+    bottom: 30%;
+    opacity: 1;
+  }
+}
+@-webkit-keyframes fadeout {
+  from {
+    bottom: 30%;
+    opacity: 1;
+  }
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
+}
+@keyframes fadeout {
+  from {
+    bottom: 30%;
+    opacity: 1;
+  }
+  to {
+    bottom: 0;
+    opacity: 0;
   }
 }

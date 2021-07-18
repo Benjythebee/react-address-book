@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Address Book",
+  "name": "A simple Web3 Address Book",
   "icons": [
     {
       "src": "favicon.ico",

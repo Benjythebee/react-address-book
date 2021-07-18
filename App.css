@@ -1,0 +1,129 @@
+body {
+  font-family: "Roboto", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.Container {
+  position: absolute;
+  top: 10%;
+  left: 25%;
+  min-width: 670px;
+  width: 60%;
+  height: 80%;
+  border: 1px solid #c5c0c0;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  overflow: hidden;
+}
+.Container .ContainerHeader {
+  position: relative;
+  min-height: 40px;
+  padding: 10px 0 0 10px;
+  background-color: #f05a29;
+}
+.Container .ContainerHeader h1 {
+  margin: 0;
+}
+.left {
+  position: absolute;
+  top: 10px;
+  right: 5px;
+}
+button.LargeButton {
+  border-radius: 59px;
+  padding: 6px 16px;
+  border: 2px solid #f15a29;
+  cursor: pointer;
+}
+button.LargeButton.-white {
+  background: #ffffff;
+}
+button.LargeButton.-white:hover {
+  background: #eeeeee;
+}
+button.LargeButton.-orange {
+  background: #f15a29;
+}
+button.LargeButton.-orange:hover {
+  background: #ffffff;
+}
+button.AddContactButton {
+  display: none;
+  height: 80px;
+  line-height: 80px;
+  width: 80px;
+  font-size: 2em;
+  font-weight: bold;
+  border-radius: 50%;
+  background-color: #f15a29;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #f15a29;
+  position: absolute;
+  bottom: 25px;
+}
+button.AddContactButton:hover {
+  background-color: white;
+  color: #f15a29;
+}
+button.ActionButton {
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-weight: 700;
+  cursor: pointer;
+  margin: 2px 5px;
+}
+button.ActionButton.SendEthButton {
+  background: #f15a29;
+  border: 1px solid #f15a29;
+}
+button.ActionButton.SendEthButton:hover {
+  background: white;
+}
+button.ActionButton.RemoveButton {
+  background: #ee3d52;
+  border: 1px solid #ee3d52;
+}
+button.ActionButton.RemoveButton:hover {
+  background: white;
+}
+.Pane {
+  background-color: antiquewhite;
+  height: 100%;
+  padding: 10px;
+}
+ul {
+  padding: 0;
+}
+ul li {
+  list-style: none;
+  margin-bottom: 2px;
+}
+.Collapsible {
+  background-color: #dadada;
+  cursor: pointer;
+  border-radius: 5px;
+  border-bottom: 1px solid black;
+}
+.Collapsible:hover {
+  background-color: #c5c0c0;
+}
+.Collapsible .Collapsible-header {
+  padding: 15px;
+  font-size: 20px;
+  font-weight: bold;
+}
+.Collapsible section {
+  background-color: white;
+  padding: 0 18px;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.2s ease-out;
+}
+.Collapsible section.active {
+  display: block;
+}
+.Collapsible section > div {
+  height: 50px;
+}
