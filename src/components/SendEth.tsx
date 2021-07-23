@@ -1,4 +1,6 @@
-import React from "react";
+import { useRef } from "react";
+import { useEffect } from "react";
+import { useState } from "react";
 import { App } from "../state";
 import { Eth } from "../utils/ethers";
 import LoadingIcon from "./LoadingIcon";
@@ -7,39 +9,22 @@ export interface SendEthProps {
   active: boolean;
   address: string;
 }
-export interface SendEthState {
-  active: boolean;
-  open: boolean;
-  transferring: boolean;
-  amount: string;
-}
 /**
  * The Send-Eth component that's hidden within the Collapsible component.
  */
-export class SendEth extends React.Component<SendEthProps, SendEthState> {
-  input: HTMLInputElement | null = null;
-  constructor(props: SendEthProps) {
-    super(props);
-    this.state = {
-      active: false,
-      open: false,
-      transferring: false,
-      amount: "0.00",
-    };
-  }
+export function SendEth(props: SendEthProps) {
+  const [open, setOpen] = useState<boolean>(false);
+  const [transfering, setTransfering] = useState<boolean>(false);
+  const [amount, setAmountState] = useState<string>("0.00");
 
-  componentDidUpdate(prevProps: SendEthProps) {
-    if (prevProps.active !== this.props.active) {
-      this.setState({ active: this.props.active });
-    }
-  }
+  const input = useRef<HTMLInputElement | null>(null);
 
-  sendEth = async () => {
+  const sendEth = async () => {
     //Check if we're connected
     if (!App.state.wallet) {
       return;
     }
-    let q = this.state.amount;
+    let q = amount;
     //Check if amount is null
     if (!q || parseFloat(q) === 0) {
       App.showSnackBar && App.showSnackBar("Amount can't be null.");
@@ -64,68 +49,64 @@ export class SendEth extends React.Component<SendEthProps, SendEthState> {
       return;
     }
 
-    this.setState({ transferring: true });
+    setTransfering(true);
     //Start transaction
-    let response = await Eth.sendEth(this.props.address, q);
+    let response = await Eth.sendEth(props.address, q);
     if (!response.success) {
       App.showSnackBar &&
         App.showSnackBar(response.message || "Something went wrong.");
     }
-    this.setState({ transferring: false });
+    setTransfering(false);
   };
   /**
    * Toggle the SendEth sliding input
    */
-  toggle = () => {
-    this.setState({ open: !this.state.open }, () => {
-      if (this.state.open) {
-        this.input?.focus();
-      }
-    });
+  const toggle = () => {
+    setOpen(!open);
   };
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    input.current?.focus();
+  }, [open]);
   /**
    * Set the amount of the input (only numbers)
    */
-  setAmount(value: string) {
+  function setAmount(value: string) {
     if (!value.match(/([0-9])|(\.)/g)) {
       return;
     }
-    this.setState({ amount: value });
+    setAmountState(value);
   }
 
-  render() {
-    return (
-      <div
-        className={`SendEth ${
-          this.state.open && this.state.active && "active"
-        }`}
-      >
-        <button className="ActionButton -orange" onClick={this.toggle}>
-          Send Eth
-        </button>
-        <div className="SlidingBox">
-          <div className="ConstantBox">
-            <input
-              ref={(c) => (this.input = c)}
-              value={this.state.amount}
-              onInput={(e) => {
-                this.setAmount(e.target["value"]);
-              }}
-              autoFocus={true}
-              type="text"
-              maxLength={10}
-              placeholder="Amount to send."
-            />
-            <button
-              disabled={!!this.state.transferring}
-              className="ActionButton"
-              onClick={this.sendEth}
-            >
-              {this.state.transferring ? <LoadingIcon /> : "Send"}
-            </button>
-          </div>
+  return (
+    <div className={`SendEth ${open && props.active && "active"}`}>
+      <button className="ActionButton -orange" onClick={toggle}>
+        Send Eth
+      </button>
+      <div className="SlidingBox">
+        <div className="ConstantBox">
+          <input
+            ref={input}
+            value={amount}
+            onInput={(e) => {
+              setAmount(e.target["value"]);
+            }}
+            autoFocus={true}
+            type="text"
+            maxLength={10}
+            placeholder="Amount to send."
+          />
+          <button
+            disabled={!!transfering}
+            className="ActionButton"
+            onClick={sendEth}
+          >
+            {transfering ? <LoadingIcon /> : "Send"}
+          </button>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }

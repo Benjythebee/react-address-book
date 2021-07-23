@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { ethers } from "ethers";
 import { App } from "../state";
 import { Eth } from "../utils/ethers";
@@ -6,6 +6,8 @@ import { contact, Storage } from "../utils/storage";
 import { SendEth } from "./SendEth";
 import Editable from "./Editable";
 import { promptAddContact, promptRemoveContact } from "./Modal";
+import { useState } from "react";
+import { useEffect } from "react";
 
 interface addressBookStates {
   contacts: contact[];
@@ -90,104 +92,85 @@ interface contactProps {
   contact: contact;
   onEdit?: Function;
 }
-interface contactStates {
-  name?: string;
-  address: string;
-  ensName?: string | null;
-  uncollapsed: boolean;
-}
 
-class Contact extends React.Component<contactProps, contactStates> {
-  element: HTMLElement | null = null;
-  constructor(props: contactProps) {
-    super(props);
-    this.state = {
-      name: props.contact.name,
-      address: props.contact.address,
-      ensName: null,
-      uncollapsed: false,
-    };
-  }
-  /**
-   * Returns Contact Object
-   */
-  get contact() {
-    return {
-      address: this.state.address,
-      name: this.state.name,
-    };
-  }
+function Contact(props: contactProps) {
+  const [uncollapsed, setUnCollapsed] = useState<boolean>(false);
+  const [ensName, setEnsName] = useState<string | null>(null);
 
-  componentDidMount() {
-    Storage.addContact(this.props.contact);
-    this.getENS();
-  }
+  const htmlElement = useRef<HTMLElement | null>(null);
+
+  const mounted = useRef<boolean>(false);
+
+  useEffect(() => {
+    if (mounted.current) {
+      return;
+    }
+    Storage.addContact(props.contact);
+    getENS(props.contact.address);
+    mounted.current = true;
+  });
+
   /**
    * Grab the ENS name of that contact
    */
-  async getENS() {
-    let ensName = await Eth.ensName(this.state.address);
+  async function getENS(address: string) {
+    let ensName = await Eth.ensName(address);
     if (ensName) {
-      this.setState({ ensName: ensName });
+      setEnsName(ensName);
     }
+  }
+
+  function contact() {
+    return {
+      address:props.contact.address,
+      name:props.contact.name,
+    };
   }
   /**
    * remove the contact from the list.
    */
-  remove = () => {
-    Storage.removeContact(this.contact);
-    this.props.onEdit && this.props.onEdit(this.state.address);
+  const remove = () => {
+    Storage.removeContact(contact());
+    props.onEdit && props.onEdit(props.contact.address);
   };
   /**
    * Collapse or unCollapse the Collapsible Element
    */
-  toggle = () => {
-    this.setState({ uncollapsed: !this.state.uncollapsed });
+  const toggle = () => {
+    setUnCollapsed(!uncollapsed);
   };
-
-  render() {
-    return (
-      <li key={this.props.contact.address} className="Contact">
-        <div className="Collapsible">
-          <div className="Collapsible-header" onClick={this.toggle}>
-            <Editable
-              contact={this.props.contact}
-              value={
-                this.state.name || this.state.ensName || this.state.address
-              }
-              defaultValue={this.state.address}
-            />
-            <i
-              className={
-                this.state.uncollapsed ? "fi-circle-up" : "fi-circle-down"
-              }
-            ></i>
-          </div>
-          <section
-            ref={(c) => (this.element = c)}
-            style={
-              this.state.uncollapsed
-                ? { maxHeight: this.element?.scrollHeight + "px" }
-                : { maxHeight: "0px" }
-            }
-          >
-            <div style={{ justifyContent: "flex-end" }}>
-              <SendEth
-                active={this.state.uncollapsed}
-                address={this.props.contact.address}
-              />
-              <button
-                className="ActionButton RemoveButton -red"
-                onClick={() => {
-                  promptRemoveContact(this.remove.bind(this));
-                }}
-              >
-                <i className="fi-trash"></i>
-              </button>
-            </div>
-          </section>
+  return (
+    <li key={props.contact.address} className="Contact">
+      <div className="Collapsible">
+        <div className="Collapsible-header" onClick={toggle}>
+          <Editable
+            contact={props.contact}
+            value={props.contact.name || ensName || props.contact.address}
+            defaultValue={props.contact.address}
+          />
+          <i className={uncollapsed ? "fi-circle-up" : "fi-circle-down"}></i>
         </div>
-      </li>
-    );
-  }
+        <section
+          ref={htmlElement}
+          style={
+            uncollapsed
+              ? { maxHeight: htmlElement.current?.scrollHeight + "px" }
+              : { maxHeight: "0px" }
+          }
+        >
+          <div style={{ justifyContent: "flex-end" }}>
+            <SendEth active={uncollapsed} address={props.contact.address} />
+            <button
+              className="ActionButton RemoveButton -red"
+              onClick={() => {
+                promptRemoveContact(remove);
+              }}
+            >
+              <i className="fi-trash"></i>
+            </button>
+          </div>
+        </section>
+      </div>
+    </li>
+  );
 }

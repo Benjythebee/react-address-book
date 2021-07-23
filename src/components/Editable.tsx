@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { contact, Storage } from "../utils/storage";
 
 export interface Props {
@@ -7,97 +7,92 @@ export interface Props {
   contact: contact;
 
   defaultValue: string;
-
-  onEditableClick?: Function;
 }
 
-interface States {
-  value: string | null;
-  isEditing: boolean;
-  previousValue: string | null;
-}
+export default function Editable(props: Props) {
+  const [value, setValue] = useState<string | null>(props.value);
+  const [previousValue, setPreviousValue] = useState<string | null>(
+    props.value
+  );
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
-export default class Editable extends React.Component<Props, States> {
-  element: HTMLSpanElement | null = null;
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      value: props.value,
-      isEditing: false,
-      previousValue: props.value,
-    };
-  }
-
-  componentDidUpdate(prevProps: any) {
-    if (prevProps.value !== this.props.value) {
-      this.setState({
-        value: this.props.value,
-        isEditing: false,
-        previousValue: this.props.value,
-      });
-    }
-  }
+  const editableElement = useRef<HTMLSpanElement | null>(null);
   /**
    * Check if the key is Enter. and Save on Enter.
    */
-  isEnterKey(event: any) {
+  const isEnterKey = (event: any) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      this.setState({ value: event.target["innerText"] }, () => this.save());
+      setValue(event.target["innerText"]);
     }
-  }
+  };
+
   /**
    * Save the new value
    */
-  save() {
-    if (!this.state.value || this.state.value?.length === 0) {
-      this.setState({ value: this.state.previousValue });
-    }
-    let save = Object.assign({}, this.props.contact, {
-      name: this.state.value,
-    });
-    Storage.editContact(save);
-    this.setState({ isEditing: false });
-  }
+  const save = useCallback(
+    (value: string | null) => {
+      if (!value || value?.length === 0) {
+        setValue(previousValue);
+      }
+      let save = Object.assign({}, props.contact, {
+        name: value,
+      });
+      Storage.editContact(save);
+      setIsEditing(false);
+    },
+    [previousValue, props.contact]
+  );
+  useEffect(() => {
+    save(value);
+  }, [value, save]);
   /**
    * toggles Editing of the Editable Component. (set to true)
    */
-  edit = (e: any) => {
+  const edit = (e: any) => {
     e.stopPropagation();
-    this.setState({ isEditing: true, previousValue: this.state.value }, () => {
-      this.element?.focus();
-    });
+    setIsEditing(true);
+    setPreviousValue(value);
+    setTimeout(() => {
+      editableElement.current?.focus();
+    }, 20);
   };
 
-  render() {
-    return (
-      <div style={{ flex: "2" }}>
-        <span
-          onBlur={() => this.setState({ isEditing: false })}
-          suppressContentEditableWarning={true}
-          contentEditable={this.state.isEditing}
-          ref={(c) => (this.element = c)}
-          onClick={this.edit}
-          onKeyDown={(e) => this.isEnterKey(e)}
+  useEffect(() => {
+    setValue(props.value);
+    setIsEditing(false);
+    setPreviousValue(props.value);
+  }, [props.value]);
+
+  const onBlur = () => {
+    setIsEditing(false);
+  };
+
+  return (
+    <div style={{ flex: "2" }}>
+      <span
+        onBlur={onBlur}
+        suppressContentEditableWarning={true}
+        contentEditable={isEditing}
+        ref={editableElement}
+        onClick={edit}
+        onKeyDown={isEnterKey}
+      >
+        {value}
+      </span>
+      {isEditing && <small>([ENTER] to save.)</small>}
+      {isEditing && (
+        <button
+          className="resetButton"
+          title="Reset Address' name"
+          onMouseDown={(e) => {
+            e.stopPropagation();
+            setValue(props.contact.address);
+          }}
         >
-          {this.state.value}
-        </span>
-        {this.state.isEditing && <small>([ENTER] to save.)</small>}
-        {this.state.isEditing && (
-          <button
-            className="resetButton"
-            title="Reset Address' name"
-            onClick={(e) => {
-              e.stopPropagation();
-              this.setState({ value: this.props.contact.address }, () =>
-                this.save()
-              );
-            }}
-          >
-            <i className="fi-spinner11"></i>
-          </button>
-        )}
-      </div>
-    );
-  }
+          <i className="fi-spinner11"></i>
+        </button>
+      )}
+    </div>
+  );
 }

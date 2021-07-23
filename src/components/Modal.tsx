@@ -1,18 +1,20 @@
 import { ethers } from "ethers";
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM, { render } from "react-dom";
 import { App } from "../state";
 import { Eth } from "../utils/ethers";
-import { Panel } from "./Panel";
+import Panel from "./Panel";
 import { Storage } from "../utils/storage";
 
 export interface ModalProps {
   title: string; // Modal title
   className?: string;
   onClose?: () => void;
+  children?: any;
 }
 /**
- * A general Modal class
+ * A general Modal class; Having modals as a Class is necessary as I use the class' static properties (see currentElement )to avoid
+ * having multiple Modals being rendered.
  */
 export class Modal extends React.Component<ModalProps, any> {
   static currentElement: Element | null;
@@ -43,33 +45,24 @@ export interface AddContactModalProps {
   onClose?: () => void;
 }
 
-interface AddContactModalStates {
-  error?: string | null;
-  value?: string | null;
-}
 /**
  * Modal to add a contact
  */
-export class AddContactModal extends React.Component<
-  AddContactModalProps,
-  AddContactModalStates
-> {
-  constructor(props: AddContactModalProps) {
-    super(props);
 
-    this.state = {
-      error: null,
-      value: null,
-    };
-  }
+export function AddContactModal(props: AddContactModalProps) {
+  const [error, setError] = useState<string | null>(null);
 
-  confirm = async () => {
-    this.setState({ error: null });
+  let addressState = useState<string | null>(null);
+  let addressValue = addressState[0];
+  let setAddress = addressState[1];
+
+  async function confirm() {
+    setError(null);
     let address;
-    let value = this.state.value;
+    let value = addressValue;
     //Check if value is an address or ETH.
     if (!value || (!ethers.utils.isAddress(value) && !value?.match(/.eth/))) {
-      this.setState({ error: "Address is not valid." });
+      setError("Address is not valid.");
       return;
     }
     //if value is ENS we reverseLookup to obtain the address
@@ -80,50 +73,44 @@ export class AddContactModal extends React.Component<
     }
     //Check if address is not null
     if (!address) {
-      this.setState({ error: "Address is not valid." });
+      setError("Address is not valid.");
       return;
     }
 
     // Check if address is user.
     if (App.state.wallet?.toLowerCase() === address.toLowerCase()) {
-      this.setState({ error: "You can't add yourself to this book address." });
+      setError("You can't add yourself to this book address.");
       return;
     }
 
     // Check we haven't already recorded that address.
     if (!!Storage.findContact(address)) {
-      this.setState({ error: "Address already exists." });
+      setError("Address already exists.");
       return;
     }
-    this.props.onConfirm && this.props.onConfirm(this.state.value);
-    this.props.onClose && this.props.onClose();
-  };
-
-  render() {
-    return (
-      <Modal
-        title="Add a contact"
-        className="AddContact"
-        onClose={this.props.onClose}
-      >
-        <div>
-          <label>Insert and address or an ENS name.</label>
-          <input
-            type="text"
-            autoFocus={true}
-            onInput={(e) => this.setState({ value: e.target["value"] })}
-          />
-        </div>
-        {this.state.error && <Panel type="danger">{this.state.error}</Panel>}
-        <button className="ActionButton -orange" onClick={this.confirm}>
-          Confirm
-        </button>{" "}
-        <button className="ActionButton -white" onClick={this.props.onClose}>
-          Cancel
-        </button>
-      </Modal>
-    );
+    props.onConfirm && props.onConfirm(address);
+    props.onClose && props.onClose();
   }
+
+  return (
+    <Modal title="Add a contact" className="AddContact" onClose={props.onClose}>
+      <div>
+        <label>Insert and address or an ENS name.</label>
+        <input
+          type="text"
+          autoFocus={true}
+          onInput={(e) => setAddress(e.target["value"])}
+        />
+      </div>
+      {error && <Panel type="danger">{error}</Panel>}
+      <button className="ActionButton -orange" onClick={() => confirm}>
+        Confirm
+      </button>{" "}
+      <button className="ActionButton -white" onClick={props.onClose}>
+        Cancel
+      </button>
+    </Modal>
+  );
 }
 
 export function promptAddContact(callback?: Function) {
@@ -154,40 +141,29 @@ export interface RemoveContactModalProps {
   onClose?: () => void;
 }
 
-export class RemoveContactModal extends React.Component<
-  RemoveContactModalProps,
-  any
-> {
-  constructor(props: RemoveContactModalProps) {
-    super(props);
-
-    this.state = {};
-  }
-
-  confirm = async () => {
-    this.props.onConfirm && this.props.onConfirm();
-    this.props.onClose && this.props.onClose();
+export function RemoveContactModal(props: RemoveContactModalProps) {
+  const confirm = async () => {
+    props.onConfirm && props.onConfirm();
+    props.onClose && props.onClose();
   };
 
-  render() {
-    return (
-      <Modal
-        title="Are you sure?"
-        className="RemoveContact"
-        onClose={this.props.onClose}
-      >
-        <div>
-          <label>Are you sure you want to remove this contact?</label>
-        </div>
-        <button className="ActionButton -orange" onClick={this.confirm}>
-          Confirm
-        </button>{" "}
-        <button className="ActionButton -white" onClick={this.props.onClose}>
-          Cancel
-        </button>
-      </Modal>
-    );
-  }
+  return (
+    <Modal
+      title="Are you sure?"
+      className="RemoveContact"
+      onClose={props.onClose}
+    >
+      <div>
+        <label>Are you sure you want to remove this contact?</label>
+      </div>
+      <button className="ActionButton -orange" onClick={() => confirm}>
+        Confirm
+      </button>{" "}
+      <button className="ActionButton -white" onClick={props.onClose}>
+        Cancel
+      </button>
+    </Modal>
+  );
 }
 
 export function promptRemoveContact(callback?: Function) {

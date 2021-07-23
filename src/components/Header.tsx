@@ -1,7 +1,7 @@
 import React from "react";
-import { App } from "../state";
+import { App, supportedChains } from "../state";
 import { Eth } from "../utils/ethers";
-import { Panel } from "./Panel";
+import Panel from "./Panel";
 import Snackbar from "./Snackbar";
 
 export class Header extends React.Component<any, any> {
@@ -71,7 +71,7 @@ export class Header extends React.Component<any, any> {
         <div className="Logo">
           <h1>Address Book</h1>
         </div>
-        {App.state.networkId.toString() !== "4" && (
+        {!supportedChains.includes(App.state.networkId) && (
           <Panel type="warning">
             This Dapp is only available on Rinkeby! Please switch Network.
           </Panel>

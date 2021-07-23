@@ -8,10 +8,9 @@ export enum PanelType {
   Help = "help",
 }
 
-//General Panel class that's easily re-usable to display info.
-export class Panel extends React.Component<any, any> {
-  get classname() {
-    switch (this.props.type) {
+export default function Panel(props:any){
+  function getClassname() {
+    switch (props.type) {
       case PanelType.Success:
         return "is-success";
       case PanelType.Info:
@@ -26,8 +25,8 @@ export class Panel extends React.Component<any, any> {
         return "is-info";
     }
   }
-  get emoji() {
-    switch (this.props.type) {
+  function getEmoji() {
+    switch (props.type) {
       case PanelType.Success:
         return <i className="fi-check-circle-o"></i>;
       case PanelType.Info:
@@ -42,12 +41,11 @@ export class Panel extends React.Component<any, any> {
         return <i className="fi-info-circle"></i>;
     }
   }
-  render() {
-    return (
-      <div className={`Panel ${this.classname}`}>
-        <div className="Panel-title">{this.emoji}</div>
-        <div className="Panel-content">{this.props.children}</div>
-      </div>
-    );
-  }
+
+  return (
+    <div className={`Panel ${getClassname()}`}>
+      <div className="Panel-title">{getEmoji()}</div>
+      <div className="Panel-content">{props.children}</div>
+    </div>
+  );
 }

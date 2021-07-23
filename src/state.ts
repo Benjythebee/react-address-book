@@ -6,6 +6,8 @@ interface appState {
   hasMetamask: boolean;
 }
 
+export const supportedChains = [4];
+
 export class State extends EventTarget {
   state: appState;
   constructor() {
@@ -31,6 +33,11 @@ export class AppState extends State {
   constructor() {
     super();
     this.state = { hasMetamask: !!Eth.metamask, wallet: null, networkId: 4 };
+    this.init();
+  }
+
+  async init() {
+    this.setState({ networkId: await this.getChainId() });
     this.setListeners();
   }
 
@@ -54,6 +61,10 @@ export class AppState extends State {
       return;
     }
     this.setState({ wallet });
+  };
+
+  getChainId = async () => {
+    return (await Eth.web3Provider.getNetwork()).chainId;
   };
 
   setListeners() {
